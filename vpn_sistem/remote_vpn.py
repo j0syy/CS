@@ -26,42 +26,42 @@ RESOURCES = {
 
 class RemoteVPNServer:
     def authenticate(self, username, password):
-        print(f"[AAA - AUTENTICACIÓN] Validando credenciales para: {username}")
+        print(f"Validando credenciales para: {username}")
         if username in USERS_DB and USERS_DB[username]["password"] == password:
             logging.info(f"AUTENTICACIÓN EXITOSA: Usuario '{username}' conectado desde IP externa.")
             print(f"[+] Autenticación exitosa. IP virtual asignada: {USERS_DB[username]['virtual_ip']}")
             return USERS_DB[username]
         else:
-            logging.warning(f"AUTENTICACIÓN FALLIDA: Intento de acceso inválido para usuario '{username}'.")
-            print(f"[-] Error de autenticación: Credenciales incorrectas.")
+            logging.warning(f"autenticacion: Intento de acceso inválido para usuario '{username}'.")
+            print(f"Error de autenticación: Credenciales incorrectas.")
             return None
 
     def authorize_and_access(self, username, role, resource):
-        print(f"[AAA - AUTORIZACIÓN] Evaluando permisos de '{username}' (Rol: {role}) sobre el recurso '{resource}'")
+        print(f"Evaluando permisos de '{username}' (Rol: {role}) sobre el recurso '{resource}'")
         
         if resource in RESOURCES:
             allowed_roles = RESOURCES[resource]
             if role in allowed_roles:
-                logging.info(f"ACCESO PERMITIDO: Usuario '{username}' ({role}) accedió a {resource}")
-                print(f"[+] Acceso CONCEDIDO al recurso {resource}\n")
+                logging.info(f"acceso permitido: Usuario '{username}' ({role}) accedió a {resource}")
+                print(f"Acceso concedido al recurso {resource}\n")
                 return True
             else:
-                logging.warning(f"ACCESO DENEGADO: Usuario '{username}' ({role}) intentó acceder a recurso restringido {resource}")
-                print(f"[-] Acceso DENEGADO: Tu rol ({role}) no cuenta con privilegios suficientes.\n")
+                logging.warning(f"acceso denegado: Usuario '{username}' ({role}) intentó acceder a recurso restringido {resource}")
+                print(f"Acceso denegado: Tu rol ({role}) no cuenta con privilegios suficientes.\n")
                 return False
         else:
-            print(f"[-] Recurso no encontrado.\n")
+            print(f"Recurso no encontrado.\n")
             return False
 
 if __name__ == "__main__":
     print("--- SIMULADOR DE VPN DE ACCESO REMOTO Y SISTEMA AAA ---")
     vpn = RemoteVPNServer()
 
-    # Prueba 1: Usuario Operador intenta ver logs (Permitido) y luego configurar servidor (Denegado)
+    # Usuario Operador intenta ver logs (Permitido) y luego configurar servidor (Denegado)
     session = vpn.authenticate("operator_user", "OpPassword123")
     if session:
         vpn.authorize_and_access("operator_user", session["role"], "/api/view-logs")
         vpn.authorize_and_access("operator_user", session["role"], "/api/server-config")
 
-    # Prueba 2: Intento de autenticación fallida
+    # Intento de autenticación fallida
     vpn.authenticate("admin_user", "ClaveFalsa")

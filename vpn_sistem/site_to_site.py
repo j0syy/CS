@@ -9,7 +9,7 @@ class SiteToSiteVPNGateway:
     def send_packet(self, src_ip, dest_ip, data, peer_gateway):
         print(f"\n[{self.site_name}] Tráfico originado en {src_ip} con destino a {dest_ip}")
         
-        # Verificar si el destino pertenece a la red remota de la sucursal (ej. red 10.200.x.x)
+        # Verificar si el destino pertenece a la red remota de la sucursal
         if dest_ip.startswith("10.200."):
             print(f"[{self.site_name}] Destino remoto detectado. Redirigiendo al túnel VPN corporativo...")
             
@@ -34,7 +34,7 @@ class SiteToSiteVPNGateway:
             print(f"[{self.site_name}] Paquete descartado por falta de cifrado en el túnel.")
 
 if __name__ == "__main__":
-    print("--- SIMULACIÓN DE VPN SITIO A SITIO (Red Central <---> Red Sucursal) ---")
+    print("SIMULACIÓN DE VPN SITIO A SITIO (Red Central <---> Red Sucursal)")
     
     # Inicializar pasarelas de ambas redes
     gateway_hq = SiteToSiteVPNGateway("Sede Central (HQ)", "192.168.10.1", "200.50.50.2")

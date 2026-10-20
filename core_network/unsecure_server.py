@@ -13,11 +13,11 @@ def run_server():
     
     while True:
         conn, addr = server_socket.accept()
-        print(f"[+] Conexión entrante desde {addr}")
+        print(f"Conexión entrante desde {addr}")
         
         # Recibe datos en texto plano
         data = conn.recv(1024).decode('utf-8')
-        print(f"[Recibido en texto plano]: {data}")
+        print(f"Recibido en texto plano: {data}")
         
         response = "Mensaje recibido sin protección."
         conn.sendall(response.encode('utf-8'))

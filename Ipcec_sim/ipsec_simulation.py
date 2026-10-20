@@ -21,23 +21,23 @@ class IPSecSimulator:
 
     def transport_mode_encrypt(self, packet):
         packet.mode = "Transporte"
-        logging.info(f"[IPSec TRANSPORTE] Protegiendo payload de {packet.src_ip} a {packet.dest_ip} (Seq: {packet.seq_num})")
+        logging.info(f"Protegiendo payload de {packet.src_ip} a {packet.dest_ip} (Seq: {packet.seq_num})")
         return packet
 
     def tunnel_mode_encrypt(self, packet):
         packet.mode = "Túnel"
         packet.encapsulated_header = {"gateway_src": "200.100.50.1", "gateway_dest": "200.100.50.2"}
-        logging.info(f"[IPSec TÚNEL] Paquete encapsulado. Gateway Origen: {packet.encapsulated_header['gateway_src']} -> Destino: {packet.encapsulated_header['gateway_dest']} (Seq: {packet.seq_num})")
+        logging.info(f"Paquete encapsulado. Gateway Origen: {packet.encapsulated_header['gateway_src']} -> Destino: {packet.encapsulated_header['gateway_dest']} (Seq: {packet.seq_num})")
         return packet
 
     def receive_packet(self, packet):
         # Mecanismo de defensa Anti-Replay
         if packet.seq_num in self.received_seqs:
-            logging.warning(f"[¡ALERTA REPLAY!] Paquete duplicado con secuencia {packet.seq_num}. ¡DESCARTADO!")
+            logging.warning(f"Paquete duplicado con secuencia {packet.seq_num}. ¡DESCARTADO!")
             return False
         
         if packet.seq_num <= self.last_valid_seq - self.max_window_size:
-            logging.warning(f"[¡ALERTA REPLAY!] Paquete fuera de ventana (muy antiguo). Seq: {packet.seq_num}. ¡DESCARTADO!")
+            logging.warning(f"Paquete fuera de ventana (muy antiguo). Seq: {packet.seq_num}. ¡DESCARTADO!")
             return False
 
         # Aceptar paquete legítimo
@@ -45,11 +45,11 @@ class IPSecSimulator:
         if packet.seq_num > self.last_valid_seq:
             self.last_valid_seq = packet.seq_num
         
-        logging.info(f"[ÉXITO] Paquete aceptado en modo {packet.mode}. Carga útil: '{packet.payload}'")
+        logging.info(f"Paquete aceptado en modo {packet.mode}. Carga útil: '{packet.payload}'")
         return True
 
 if __name__ == "__main__":
-    print("--- SIMULACIÓN DE IPSEC Y PROTECCIÓN ANTI-REPLAY ---")
+    print("SIMULACIÓN DE IPSEC Y PROTECCIÓN ANTI-REPLAY")
     sim = IPSecSimulator()
 
     # Paquetes legítimos iniciales
@@ -64,8 +64,8 @@ if __name__ == "__main__":
     tunnel_packet = sim.tunnel_mode_encrypt(p2)
     sim.receive_packet(tunnel_packet)
 
-    # Simular ataque de Replay (reinyectar el paquete 100 previamente capturado)
-    print("\n--- SIMULANDO ATAQUE DE REPLAY ---")
+    # Simular ataque de Replay
+    print("\nSIMULANDO ATAQUE DE REPLAY")
     replay_packet = IPSecPacket("192.168.1.10", "10.0.0.5", "Paquete malicioso reenviado", 100)
     replay_packet.mode = "Transporte"
     sim.receive_packet(replay_packet)
