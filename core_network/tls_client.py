@@ -14,7 +14,11 @@ def run_tls_client():
     
     try:
         print(f"[CLIENTE SEGURO TLS] Conectando de forma segura a {host}:{port}...")
-        # Envolver el socket en modo cliente y validar la cadena de confianza
+        
+        # 1. Conectar primero el socket TCP al servidor
+        client_socket.connect((host, port))
+        
+        # 2. Envolver el socket conectado con TLS (aquí se realiza el Handshake y validación de la PKI)
         secure_socket = context.wrap_socket(client_socket, server_hostname="localhost")
         
         message = "Hola servidor, este mensaje viaja cifrado y protegido por TLS."
